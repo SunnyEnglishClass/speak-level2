@@ -832,22 +832,23 @@ const ZH_VOCAB_AUDIO = {
 
 let _currentAudio = null;
 
-function playAudio(url) {
+function playAudio(url, rate) {
   if (_currentAudio) {
     _currentAudio.pause();
     _currentAudio.currentTime = 0;
   }
   _currentAudio = new Audio(url);
-  _currentAudio.playbackRate = 0.9;
+  _currentAudio.playbackRate = rate || 1.0;
   _currentAudio.play().catch(e => console.warn('Audio play error:', e));
 }
 
 function speak(text, lang) {
-  const map = lang === 'zh-CN' ? {...ZH_STORY_AUDIO, ...ZH_VOCAB_AUDIO}
-                               : {...EN_STORY_AUDIO, ...EN_VOCAB_AUDIO};
+  const isZh = lang === 'zh-CN';
+  const map = isZh ? {...ZH_STORY_AUDIO, ...ZH_VOCAB_AUDIO}
+                   : {...EN_STORY_AUDIO, ...EN_VOCAB_AUDIO};
   const url = map[text];
   if (url) {
-    playAudio(url);
+    playAudio(url, isZh ? 0.9 : 1.0);
   } else {
     console.warn('No audio file for:', text);
   }
